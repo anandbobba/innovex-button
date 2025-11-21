@@ -157,12 +157,13 @@ body::after {
 /* === CONTENT WRAPPER === */
 .content-wrapper {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: clamp(40px, 6vw, 80px);
   flex-wrap: wrap;
   width: 100%;
   margin: 40px 0;
+  position: relative;
 }
 
 /* === BUTTON SECTION === */
@@ -389,11 +390,25 @@ body::after {
 
 /* === LOGOS CONTAINER === */
 .logos-container {
+  position: absolute;
+  top: 0;
+  right: 20px;
   display: flex;
   flex-direction: column;
   gap: 30px;
   align-items: center;
-  animation: fadeInUp 0.8s ease-out 0.4s both;
+  animation: fadeInRight 0.8s ease-out 0.4s both;
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .logo-wrapper {
@@ -442,49 +457,6 @@ body::after {
   text-transform: uppercase;
 }
 
-/* === FOOTER === */
-.footer {
-  margin-top: 40px;
-  animation: fadeInUp 0.8s ease-out 0.6s both;
-}
-
-.event-info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  justify-content: center;
-  align-items: center;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.6);
-  padding: 12px 24px;
-  border-radius: 50px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(92, 46, 15, 0.15);
-  transition: all 0.3s ease;
-}
-
-.info-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(92, 46, 15, 0.25);
-  background: rgba(255, 255, 255, 0.8);
-}
-
-.info-icon {
-  font-size: 1.3rem;
-}
-
-.info-text {
-  font-size: clamp(0.85rem, 1.8vw, 1rem);
-  font-weight: 500;
-  color: var(--dark-brown);
-  letter-spacing: 0.02em;
-}
-
 /* === ANIMATIONS === */
 @keyframes fadeInDown {
   from {
@@ -508,16 +480,34 @@ body::after {
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
   .content-wrapper {
     flex-direction: column;
     gap: 40px;
+    align-items: center;
+  }
+
+  .button-section {
+    order: 2;
   }
   
   .logos-container {
+    position: relative;
+    top: auto;
+    right: auto;
     flex-direction: row;
     gap: 25px;
+    order: 1;
   }
   
   .decorative-corner {
@@ -544,10 +534,6 @@ body::after {
   .corner-bottom-right {
     right: 15px;
   }
-  
-  .event-info {
-    gap: 15px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -567,10 +553,5 @@ body::after {
   .logo {
     min-width: 90px;
     min-height: 90px;
-  }
-  
-  .event-info {
-    flex-direction: column;
-    gap: 12px;
   }
 }

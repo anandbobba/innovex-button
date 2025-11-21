@@ -52,27 +52,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Add floating animation to logos
-  function addLogoAnimation() {
-    const logos = document.querySelectorAll('.logo');
-    logos.forEach((logo, index) => {
-      const delay = index * 0.5;
-      logo.style.animation = `float 3s ease-in-out ${delay}s infinite`;
-    });
-  }
-
-  // Create floating keyframe animation
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-  `;
-  document.head.appendChild(style);
+  const logos = document.querySelectorAll('.logo');
+  logos.forEach((logo, index) => {
+    logo.style.animation = `float 3s ease-in-out ${index * 0.5}s infinite`;
+  });
 
   // Main button click handler
   button.addEventListener('click', function(e) {
@@ -106,9 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
       navigator.vibrate([50, 30, 50]);
     }
     
-    // Play subtle sound if available (optional)
-    playClickSound();
-    
     // Reset everything after delay
     setTimeout(() => {
       successCheck.classList.remove('show');
@@ -119,57 +99,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 2500);
   });
 
-  // Optional: Add sound effect
-  function playClickSound() {
-    // Create a subtle click sound using Web Audio API
-    try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = 800;
-      oscillator.type = 'sine';
-      
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-      
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.1);
-    } catch (e) {
-      // Audio not supported or blocked
-      console.log('Audio not available');
-    }
-  }
-
-  // Add hover effect sound (very subtle)
-  button.addEventListener('mouseenter', function() {
-    try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = 600;
-      oscillator.type = 'sine';
-      
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
-      
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.05);
-    } catch (e) {
-      // Silently fail if audio not available
-    }
-  });
-
-  // Initialize logo animations
-  addLogoAnimation();
-
   // Add keyboard support (Enter or Space to press button)
   button.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -178,49 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Easter egg: Konami code for special effect
-  let konamiCode = [];
-  const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-  
-  document.addEventListener('keydown', function(e) {
-    konamiCode.push(e.key);
-    konamiCode = konamiCode.slice(-10);
-    
-    if (konamiCode.join(',') === konamiSequence.join(',')) {
-      activateEasterEgg();
-    }
-  });
-
-  function activateEasterEgg() {
-    // Special rainbow effect
-    button.style.background = 'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)';
-    button.style.backgroundSize = '400% 400%';
-    button.style.animation = 'rainbow 3s ease infinite';
-    
-    const rainbowStyle = document.createElement('style');
-    rainbowStyle.textContent = `
-      @keyframes rainbow {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-      }
-    `;
-    document.head.appendChild(rainbowStyle);
-    
-    // Show special message
-    statusMessage.textContent = '🎉 Easter Egg Activated! 🎉';
-    statusMessage.classList.add('show');
-    
-    setTimeout(() => {
-      button.style.background = 'linear-gradient(135deg, var(--accent-red) 0%, var(--accent-red-dark) 100%)';
-      button.style.animation = '';
-      statusMessage.classList.remove('show');
-      statusMessage.textContent = '✓ Button Pressed Successfully!';
-    }, 5000);
-  }
-
   // Console message for developers
   console.log('%c🚀 INNOVEX 2025 🚀', 'font-size: 20px; font-weight: bold; color: #8B2500;');
   console.log('%cCode for Innovation - "Not Me But You"', 'font-size: 14px; color: #5C2E0F;');
-  console.log('%cTry the Konami Code for a surprise! ⬆️⬆️⬇️⬇️⬅️➡️⬅️➡️BA', 'font-size: 12px; color: #8B7355;');
 });
