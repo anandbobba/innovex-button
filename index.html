@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Press Button</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow: hidden;
+      position: relative;
+      padding: 20px;
+    }
+
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    .container {
+      text-align: center;
+      z-index: 10;
+      max-width: 100%;
+    }
+
+    .press-button {
+      position: relative;
+      width: clamp(200px, 30vw, 300px);
+      height: clamp(200px, 30vw, 300px);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #ffffff;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 
+        0 20px 40px rgba(37, 99, 235, 0.3),
+        0 10px 20px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .press-button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .press-button:hover {
+      transform: translateY(-4px);
+      box-shadow: 
+        0 25px 50px rgba(37, 99, 235, 0.4),
+        0 15px 30px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .press-button:hover::before {
+      opacity: 1;
+    }
+
+    .press-button:active {
+      transform: translateY(-1px) scale(0.98);
+      box-shadow: 
+        0 15px 30px rgba(37, 99, 235, 0.3),
+        0 8px 16px rgba(0, 0, 0, 0.2),
+        inset 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .press-button.pressed {
+      animation: press-pulse 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes press-pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(0.96);
+      }
+    }
+
+    /* Status message */
+    .status-message {
+      margin-top: clamp(40px, 8vw, 80px);
+      font-size: clamp(1.25rem, 3vw, 2rem);
+      font-weight: 600;
+      color: #e2e8f0;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.05em;
+    }
+
+    .status-message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Ripple effect */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(0);
+      animation: ripple-animation 0.6s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-animation {
+      to {
+        transform: scale(2.5);
+        opacity: 0;
+      }
+    }
+
+    /* Subtle particle effect */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(59, 130, 246, 0.8);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particle-fade 1s ease-out forwards;
+    }
+
+    @keyframes particle-fade {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) scale(0);
+      }
+    }
+
+    /* Glow ring */
+    .glow-ring {
+      position: absolute;
+      inset: -8px;
+      border: 2px solid rgba(59, 130, 246, 0.3);
+      border-radius: 50%;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .press-button:hover .glow-ring {
+      opacity: 1;
+      animation: ring-pulse 2s ease-out infinite;
+    }
+
+    @keyframes ring-pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.6;
+      }
+      100% {
+        transform: scale(1.15);
+        opacity: 0;
+      }
+    }
+
+    /* Success indicator */
+    .success-check {
+      position: absolute;
+      width: clamp(50px, 8vw, 80px);
+      height: clamp(50px, 8vw, 80px);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .success-check.show {
+      animation: check-appear 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes check-appear {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .success-check svg {
+      width: 100%;
+      height: 100%;
+      stroke: #ffffff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+    }
+
+    .success-check.show svg {
+      animation: check-draw 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+    }
+
+    @keyframes check-draw {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      body {
+        padding: 15px;
+      }
+      
+      .press-button {
+        min-width: 180px;
+        min-height: 180px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .press-button {
+        min-width: 160px;
+        min-height: 160px;
+        font-size: 0.875rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button id="pressButton" class="press-button">
+      <div class="glow-ring"></div>
+      <span id="buttonText">Press</span>
+      <div class="success-check" id="successCheck">
+        <svg viewBox="0 0 52 52">
+          <path d="M14 27l10 10 20-20"/>
+        </svg>
+      </div>
+    </button>
+    
+    <div id="statusMessage" class="status-message">
+      Button has been pressed
+    </div>
+  </div>
+
+  <script>
+    const button = document.getElementById('pressButton');
+    const buttonText = document.getElementById('buttonText');
+    const statusMessage = document.getElementById('statusMessage');
+    const successCheck = document.getElementById('successCheck');
+
+    // Create ripple effect
+    function createRipple(e) {
+      const button = e.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      
+      button.appendChild(ripple);
+      
+      setTimeout(() => ripple.remove(), 600);
+    }
+
+    // Create subtle particles
+    function createParticles() {
+      const rect = button.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      for (let i = 0; i < 12; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        const angle = (Math.PI * 2 * i) / 12;
+        const velocity = 60 + Math.random() * 40;
+        const tx = Math.cos(angle) * velocity;
+        const ty = Math.sin(angle) * velocity;
+        
+        particle.style.left = centerX + 'px';
+        particle.style.top = centerY + 'px';
+        particle.style.setProperty('--tx', tx + 'px');
+        particle.style.setProperty('--ty', ty + 'px');
+        
+        document.body.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 1000);
+      }
+    }
+
+    // Button click handler
+    button.addEventListener('click', function(e) {
+      // Add pressed animation
+      this.classList.add('pressed');
+      setTimeout(() => this.classList.remove('pressed'), 500);
+      
+      // Hide text and show check mark
+      buttonText.style.opacity = '0';
+      setTimeout(() => {
+        successCheck.classList.add('show');
+      }, 100);
+      
+      // Show status message
+      statusMessage.classList.add('show');
+      
+      // Create effects
+      createRipple(e);
+      createParticles();
+      
+      // Vibrate if supported (mobile)
+      if (navigator.vibrate) {
+        navigator.vibrate(100);
+      }
+      
+      // Reset after 2 seconds
+      setTimeout(() => {
+        successCheck.classList.remove('show');
+        setTimeout(() => {
+          buttonText.style.opacity = '1';
+        }, 300);
+        statusMessage.classList.remove('show');
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
